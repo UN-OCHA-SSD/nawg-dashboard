@@ -56,8 +56,8 @@ test('Pages artifact uses the repository base and contains only approved public 
   const html=fs.readFileSync(new URL('index.html',output),'utf8');
   assert.match(html,/\/nawg-dashboard\/assets\//);
   for(const match of html.matchAll(/(?:src|href)="\/nawg-dashboard\/([^"]+)"/g))assert.ok(fs.existsSync(new URL(match[1],output)));
-  const archive=JSON.parse(fs.readFileSync(new URL('data/nawg-archive.json',root),'utf8'));
-  const reports=new Set(archive.reports.map(r=>r.file));
+  const reference=JSON.parse(fs.readFileSync(new URL('data/nawg-reference.json',root),'utf8'));
+  const reports=new Set(reference.reports.map(r=>r.file));
   const files=fs.readdirSync(output,{recursive:true,withFileTypes:true}).filter(entry=>entry.isFile());
   for(const entry of files){
     const full=path.join(entry.parentPath,entry.name),relative=path.relative(new URL(output).pathname,full);
@@ -65,6 +65,8 @@ test('Pages artifact uses the repository base and contains only approved public 
   }
   assert.deepEqual(JSON.parse(fs.readFileSync(new URL('data/nawg-public.json',output))),snapshot);
   const bundles=files.filter(f=>f.name.endsWith('.js')).map(f=>fs.readFileSync(path.join(f.parentPath,f.name),'utf8')).join('\n');
-  assert.ok(bundles.includes('NAWG analysis archive'));assert.ok(bundles.includes('ActivityInfo snapshot'));
+  assert.ok(!bundles.includes('NAWG analysis archive'));assert.ok(bundles.includes('ActivityInfo'));
+  for(const retired of ['hpc:2026','hpc:2025','hpcByCounty','Earlier-framework sensitivity range','Study: published 2026'])assert.ok(!bundles.includes(retired),'Retired data in public bundle: '+retired);
+  assert.ok(!fs.existsSync(new URL('data/nawg-archive.json',output)));
   assert.ok(!bundles.includes('/api/data'));assert.ok(!bundles.includes('Bearer '));
 });

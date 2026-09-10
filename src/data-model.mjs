@@ -13,6 +13,8 @@ export const INDICATORS = [
   {id:'protection', label:'Protection', field:'protection', severity:'protection_severity', group:'First-level triggers'},
   {id:'flow', label:'IDP / returnee flow', field:'IDP_returnee_flow', severity:'IDP_returnee_flow_severity', group:'First-level triggers'},
   {id:'disease', label:'Disease outbreak', field:'disease_outbreak', severity:'disease_outbreak_severity', group:'First-level triggers'},
+  {id:'climate', label:'Climate', field:'climate_impact', severity:'climate_impact_severity', group:'First-level triggers'},
+  {id:'conflict', label:'Conflict', field:'conflict', severity:'conflict_severity', group:'First-level triggers'},
   {id:'food', label:'Food security · IPC AFI', field:'IPC_AFI', severity:'IPC_AFI_phase_severity', group:'First-level triggers'},
   {id:'nutrition', label:'Malnutrition · IPC AMN', field:'IPC_AMN', severity:'IPC_AMN_phase_severity', group:'First-level triggers'},
 ];
@@ -32,7 +34,7 @@ export function periodLabel(key, short=true) {
 }
 export function recordScore(r) { return numeric(r?.needs_severity_score_NSS_edited) ?? numeric(r?.needs_severity_score_NSS); }
 export function recordBand(r) { return r?.band_edited?.trim() || r?.band?.trim() || 'Not classified'; }
-export const metricFields = ['needs_severity_score_NSS','needs_severity_score_NSS_edited','band','band_edited','NSS_severity','underlying_dimvulnerability_score_UVS','aggregate_trigger_score_ATS',...INDICATORS.flatMap(i=>[i.field,i.severity])];
+export const metricFields = ['needs_severity_score_NSS','needs_severity_score_NSS_edited','band','band_edited','NSS_severity','underlying_dimvulnerability_score_UVS','aggregate_trigger_score_ATS',...INDICATORS.flatMap(i=>[i.field,i.severity]),'classification_context'];
 const metricSignature = r => JSON.stringify(metricFields.map(f=>r[f]??null));
 export function createModel(rows, geo) {
   const features = geo.features.map(f => ({...f, key:normalizeName(f.properties.adm2_name), name:f.properties.adm2_name, state:f.properties.adm1_name}));
@@ -72,9 +74,9 @@ export function calendarPeriods(periods) {
   return Array.from({length:(endY-startY)*12+endM-startM+1},(_,i)=>new Date(Date.UTC(startY,startM-1+i,1)).toISOString().slice(0,7));
 }
 export function severityInfo(value) {
-  const v=String(value??'Not available'), lower=v.toLowerCase();
+  const v=String(value??'Not available').trim(), lower=v.toLowerCase();
   if(lower==='none recorded')return {label:v,level:0,max:4,color:'#f4f6f3'};
-  if(lower.includes('pockets of 5')) return {label:v,level:4,max:5,color:'#c52c42'};
+  if(/pockets of (phase )?5/.test(lower)) return {label:v,level:4,max:5,color:'#c52c42'};
   const p=lower.match(/phase\s*(\d)/);
   if(p) return {label:v,level:+p[1],max:5,color:['','#f9ebc2','#f6d897','#ffab79','#eb6260','#c52c42'][+p[1]] || '#b9c2cd'};
   const level={'low':1,'moderate':2,'high':3,'very high':4}[lower] || 0;

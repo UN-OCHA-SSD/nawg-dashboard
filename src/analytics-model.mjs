@@ -1,31 +1,36 @@
-import {createModel,INDICATORS,MONTHS,normalizeName,BAND_COLORS,calendarPeriods} from './data-model.mjs';
-export const ARCHIVE_INDICATORS=[...INDICATORS.slice(0,6),
-  {id:'climate',label:'Climate',field:'climate',severity:'climate_severity',group:'First-level triggers'},
-  {id:'conflict',label:'Conflict',field:'conflict',severity:'conflict_severity',group:'First-level triggers'},
-  ...INDICATORS.slice(6)];
-export const indicatorsFor=cell=>cell?.row?.evidence_source==='archive'?ARCHIVE_INDICATORS:INDICATORS;
-export const archiveColors={A:'#d7191c',B:'#fc8d59',C:'#fdbf6f',D:'#fae8b5',E:'#e6e1d9',F:'#ffffff'};
-export const colorsFor=model=>model?.sourceKind==='archive'?archiveColors:BAND_COLORS;
-export const cellColor=cell=>(cell?.row?.evidence_source==='archive'?archiveColors:BAND_COLORS)[cell?.band]||'#b9c2cd';
-export const frameworkOf=(model,p)=>model.sourceKind==='archive'?(model.cycles.find(c=>c.id===p)?.fw??(p>='2025-12'?'v2':'v1')):(p>='2025-12'?'revised':'legacy');
+import {createModel,INDICATORS,BAND_COLORS,calendarPeriods,periodKey,numeric,recordScore,recordBand} from './data-model.mjs';
+
+export const revisedColors={A:'#d7191c',B:'#fc8d59',C:'#fdbf6f',D:'#fae8b5',E:'#e6e1d9',F:'#ffffff'};
+export const frameworkOf=(_model,p)=>p>='2025-12'?'v2':'v1';
+export const colorsFor=(model,period=model?.defaultPeriod)=>frameworkOf(model,period)==='v2'?revisedColors:BAND_COLORS;
+export const cellColor=cell=>colorsFor(null,cell?.row?periodKey(cell.row):null)[cell?.band]||'#b9c2cd';
+export const indicatorsFor=()=>INDICATORS;
 export const comparable=(model,a,b)=>Boolean(a&&b&&frameworkOf(model,a)===frameworkOf(model,b));
 export const previousPeriod=(model,p)=>model.periods.filter(k=>k<p).at(-1)||'';
-export function archiveModel(data,geo){
-  const counties=new Map(data.counties.map(c=>[c.key,c]));
-  const rows=data.rows.map(r=>{
-    const c=counties.get(r.county),[y,m]=r.cycle.split('-'),fw=data.cycles.find(c=>c.id===r.cycle).fw;
-    const row={'County.name':c.name==='Abyei'?'Abyei Region':c.name,'County.parent.name':c.state,Year:y,Month:MONTHS[+m-1],needs_severity_score_NSS:r.initialScore,needs_severity_score_NSS_edited:r.score,band:r.initialBand,band_edited:r.band,NSS_severity:data.bands.find(b=>b.id===r.band)?.label,underlying_dimvulnerability_score_UVS:r.uvs,aggregate_trigger_score_ATS:r.ats,evidence_source:'archive',framework:fw,adjustment:r.adjustment,source_band:fw==='v1'?({A:'A',B:'B1',C:'B2',D:'C',E:'D',F:'E'}[r.band]):r.band};
-    ARCHIVE_INDICATORS.forEach((i,n)=>{row[i.field]=r.contributions[n];row[i.severity]=data.indicators[n]['max_'+fw]===0?'Not in framework':n===8||n===9?((n===8?r.afi:r.amn)==null?'No data':(n===8?r.afi:r.amn)===4.5?'Phase 4 · pockets of 5':'Phase '+(n===8?r.afi:r.amn)):r.classifications[n];});
-    for(const year of data.hpc.years)row['HPC_'+year]=data.hpc.records[year]?.[r.county]??null;
-    return row;
-  });
+export const highBands=(period,bandSet='AB')=>period>='2025-12'?(bandSet==='AB'?['A','B']:['A','B','C']):(bandSet==='AB'?['A','B1']:['A','B1','B2']);
+export const highBandLabel=(period,bandSet='AB')=>'Bands '+highBands(period,bandSet).join(' / ');
+export const CLASSIFICATION_CONTEXTS=['IPC methodological restriction','Technical correction','Contextual note recorded','Final result differs','No change recorded'];
+// Only bounded labels leave the private export. Never publish note text or infer
+// a meeting decision from a score difference alone.
+export function classificationContext(row){
+  if(CLASSIFICATION_CONTEXTS.includes(row.classification_context))return row.classification_context;
+  const note=String(row.note||'').trim().toLowerCase();
+  if(note.includes('methodological restriction'))return CLASSIFICATION_CONTEXTS[0];
+  if(note.includes('rounding')||note.includes('issue in the script'))return CLASSIFICATION_CONTEXTS[1];
+  if(note)return CLASSIFICATION_CONTEXTS[2];
+  if((numeric(row.needs_severity_score_NSS)!==null&&recordScore(row)!==numeric(row.needs_severity_score_NSS))||recordBand(row)!==String(row.band||'').trim())return CLASSIFICATION_CONTEXTS[3];
+  return CLASSIFICATION_CONTEXTS[4];
+}
+export function activityModel(payload,geo,reference){
+  const rows=payload.rows.map(r=>({...r,classification_context:classificationContext(r)}));
   const model=createModel(rows,geo);
-  if(model.unmapped.length||model.invalid.length||model.duplicates.length)throw new Error('Archive has unmapped or duplicate records; review import.');
-  return {...model,sourceKind:'archive',sourceLabel:'NAWG analysis archive',indicators:ARCHIVE_INDICATORS,cycles:data.cycles,archive:data,rows,hpcByCounty:Object.fromEntries(data.counties.map(c=>[normalizeName(c.name==='Abyei'?'Abyei Region':c.name),Object.fromEntries(data.hpc.years.map(y=>[y,data.hpc.records[y]?.[c.key]??null]))]))};
+  // References contain only definitions and publication metadata, never
+  // observations. Every dashboard figure is derived from ActivityInfo.
+  return {...model,rows,sourceKind:'activityinfo',sourceLabel:'ActivityInfo',indicators:INDICATORS,reference,fetchedAt:payload.fetchedAt,quality:payload.quality};
 }
 export function summary(model,counties,period){
   const cells=counties.map(c=>model.cells.get(period+'/'+c.key)).filter(c=>c?.score!=null),scores=cells.map(c=>c.score).sort((a,b)=>a-b),n=scores.length;
-  return {n,total:counties.length,mean:n?scores.reduce((a,b)=>a+b,0)/n:null,median:n?(scores[Math.floor((n-1)/2)]+scores[Math.floor(n/2)])/2:null,counts:cells.reduce((o,c)=>(o[c.band]=(o[c.band]||0)+1,o),{}),ab:cells.filter(c=>model.sourceKind==='archive'?['A','B'].includes(c.band):['A','B','B1'].includes(c.band)).length};
+  return {n,total:counties.length,mean:n?scores.reduce((a,b)=>a+b,0)/n:null,median:n?(scores[Math.floor((n-1)/2)]+scores[Math.floor(n/2)])/2:null,counts:cells.reduce((o,c)=>(o[c.band]=(o[c.band]||0)+1,o),{}),ab:cells.filter(c=>highBands(period).includes(c.band)).length};
 }
 export function paired(model,counties,period,compare){
   if(!comparable(model,period,compare))return [];
@@ -36,5 +41,5 @@ export function nationalSeries(model,counties,period,range=12){
 }
 export function persistence(model,counties,period,threshold=.8,bandSet='AB'){
   const periods=model.periods.filter(p=>p<=period&&comparable(model,p,period)).slice(-12);
-  return counties.map(c=>{const rows=periods.map(p=>model.cells.get(p+'/'+c.key)).filter(c=>c?.score!=null);const high=rows.filter(c=>(model.sourceKind==='archive'?(bandSet==='AB'?['A','B']:['A','B','C']):(bandSet==='AB'?['A','B','B1']:['A','B','B1','B2'])).includes(c.band)).length;return {...c,high,observed:rows.length,cycles:periods.length,share:rows.length?high/rows.length:null};}).filter(c=>c.observed>=Math.min(3,periods.length)&&c.share>=threshold).sort((a,b)=>b.share-a.share||b.high-a.high||a.name.localeCompare(b.name));
+  return counties.map(c=>{const rows=periods.map(p=>model.cells.get(p+'/'+c.key)).filter(c=>c?.score!=null);const high=rows.filter(c=>highBands(period,bandSet).includes(c.band)).length;return {...c,high,observed:rows.length,cycles:periods.length,share:rows.length?high/rows.length:null};}).filter(c=>c.observed>=Math.min(3,periods.length)&&c.share>=threshold).sort((a,b)=>b.share-a.share||b.high-a.high||a.name.localeCompare(b.name));
 }

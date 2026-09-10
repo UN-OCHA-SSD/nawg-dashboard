@@ -61,11 +61,11 @@ export function CountyMap({model,period,selected,onSelect,visibleKeys,indicator=
   useEffect(()=>{
     if(!layers.current)return;
     layers.current.eachLayer(l=>{
-      const key=l.feature.key,cell=model.cells.get(period+'/'+key),value=indicator.startsWith('hpc:')?(model.hpcByCounty?.[key]?.[indicator.slice(4)]!=null?{...severityInfo('Phase '+model.hpcByCounty[key][indicator.slice(4)]),label:'HNRP '+indicator.slice(4)+' · annual severity '+model.hpcByCounty[key][indicator.slice(4)]+'/5'}:{color:'#b9c2cd',label:'No annual HNRP data'}):mapValue(cell,indicator,model.cells.get(compare+'/'+key),comparable(model,period,compare)),visible=visibleKeys.has(key);
+      const key=l.feature.key,cell=model.cells.get(period+'/'+key),value=mapValue(cell,indicator,model.cells.get(compare+'/'+key),comparable(model,period,compare)),visible=visibleKeys.has(key);
       l.setStyle({fillColor:value.color,fillOpacity:visible?0.96:0.13,color:key===selected?'#0879fa':'#aa9272',opacity:visible?1:0.25,weight:key===selected?2.6:0.7});
       if(key===selected)l.bringToFront();
       const content=document.createElement('div'),strong=document.createElement('strong'),detail=document.createElement('div');
-      strong.textContent=l.feature.name;detail.textContent=value.label+(!indicator.startsWith('hpc:')&&cell?.score!=null?' · NSS '+cell.score.toFixed(2):'');content.append(strong,detail);
+      strong.textContent=l.feature.name;detail.textContent=value.label+(cell?.score!=null?' · NSS '+cell.score.toFixed(2):'');content.append(strong,detail);
       if(l.getTooltip())l.setTooltipContent(content);else l.bindTooltip(content,{sticky:true,className:'map-hover'});
       const el=l.getElement();if(el){el.setAttribute('tabindex',visible?'0':'-1');el.setAttribute('role','button');el.setAttribute('aria-label',l.feature.name+' — '+detail.textContent);el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(key);}};}
     });

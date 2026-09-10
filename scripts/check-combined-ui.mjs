@@ -49,12 +49,13 @@ try{
  const pdf=await context.request.get(new URL(await page.locator('.report-library article a').first().getAttribute('href'),base).href);assert.equal(pdf.status(),200);assert.equal((await pdf.body()).subarray(0,5).toString(),'%PDF-');
  await page.getByRole('button',{name:'National overview',exact:true}).click();
  await page.getByLabel('Map indicator').selectOption('change');assert.ok((await page.locator('.leaflet-interactive[aria-label^="Guit —"]').getAttribute('aria-label')).includes('+1.40'));
- await page.getByLabel('Map indicator').selectOption('hpc:2026');assert.ok((await page.locator('.leaflet-interactive[aria-label^="Twic East —"]').getAttribute('aria-label')).includes('annual severity 4/5'));
+ assert.equal(await page.locator('option[value^="hpc:"]').count(),0,'No non-ActivityInfo map layers');
  await page.getByLabel('Map indicator').selectOption('score');await page.getByLabel('Map indicator').selectOption('band');
- await page.getByLabel('Evidence source').selectOption('activityinfo');
- await page.waitForFunction(()=>document.querySelector('[aria-label="Reporting period"]').value==='2025-11');
- await page.getByLabel('Evidence source').selectOption('archive');
- await page.waitForFunction(()=>document.querySelector('[aria-label="Reporting period"]').value==='2026-06');
+ assert.equal(await page.getByLabel('Evidence source',{exact:true}).count(),0);
+ assert.ok(page.url().includes('source=activityinfo'),'legacy archive links now use ActivityInfo');
+ await page.getByLabel('Reporting period').selectOption('2025-11');
+ assert.equal(await page.locator('.map-legend').getByRole('button',{name:'B2',exact:true}).count(),1);
+ await page.getByLabel('Reporting period').selectOption('2026-06');
  await page.getByRole('button',{name:'Switch to dark mode'}).click();await page.screenshot({path:'qa/combined/overview-dark.png',fullPage:true});
  await page.getByRole('button',{name:'Switch to light mode'}).click();
  for(const width of [884,783,390]){
@@ -67,5 +68,5 @@ try{
  }
  assert.deepEqual(errors,[]);assert.deepEqual(requests,[]);assert.ok(reports.every(r=>!r.overflow),JSON.stringify(reports.filter(r=>r.overflow)));
  await fs.writeFile('qa/combined/results.json',JSON.stringify({errors,requests,reports,interactionChecks:'passed'},null,2));
- console.log('PASS all routes, responsive widths, source switching, indicators, county search, comparisons, CSV/PDF downloads, map layers and themes.');
+ console.log('PASS all routes, responsive widths, ActivityInfo-only source and legacy links, indicators, county search, comparisons, CSV/PDF downloads, map layers and themes.');
 }finally{await browser.close();}

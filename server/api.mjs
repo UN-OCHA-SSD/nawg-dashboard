@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {publicSnapshot} from '../src/public-snapshot.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 try { process.loadEnvFile(path.join(root,'.env.local')); } catch {}
 const cacheFile=path.join(root,'.cache/activityinfo.json');
@@ -43,7 +44,8 @@ export async function api(req,res) {
         data={...data,cached:true,warning:e.message+' Showing the saved snapshot.'};
       }
     }
-    res.end(JSON.stringify(data));
+    const geo=JSON.parse(await fs.readFile(path.join(root,'public/data/counties.geojson'),'utf8'));
+    res.end(JSON.stringify({...publicSnapshot(data.rows,data.fetchedAt,geo),...(data.warning?{warning:data.warning}:{})}));
   } catch(e) {res.statusCode=503;res.end(JSON.stringify({error:e.message}));}
   return true;
 }

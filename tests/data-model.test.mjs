@@ -4,14 +4,13 @@ import fs from 'node:fs';
 import {createModel,recordScore,calendarTrend,bandsForPeriod,csvText,normalizeName,calendarPeriods} from '../src/data-model.mjs';
 import {monthlyPublications} from '../src/publications.mjs';
 import {trendGapSegments} from '../src/trend-gaps.mjs';
-const privateCache=new URL('../.cache/activityinfo.json',import.meta.url);
-const rows=fs.existsSync(privateCache)?JSON.parse(fs.readFileSync(privateCache)):JSON.parse(fs.readFileSync(new URL('../data/nawg-public.json',import.meta.url))).rows;
+const rows=JSON.parse(fs.readFileSync(new URL('../data/nawg-public.json',import.meta.url))).rows;
 const geo=JSON.parse(fs.readFileSync(new URL('../public/data/counties.geojson',import.meta.url)));
 const model=createModel(rows,geo);
 test('real source snapshot reconciles county coverage and reviewed name alias',()=>{
-  assert.equal(model.rawCount,2281);assert.equal(model.counties.length,79);assert.equal(model.unmapped.length,0);
-  assert.equal(model.coverage['2025-11'].valid,71);assert.equal(model.coverage['2025-12'].valid,8);
-  assert.equal(model.defaultPeriod,'2025-11');assert.equal(normalizeName('Abyei Administrative Area'),'abyeiregion');
+  assert.equal(model.rawCount,2834);assert.equal(model.counties.length,79);assert.equal(model.unmapped.length,0);
+  assert.equal(model.coverage['2025-11'].valid,79);assert.equal(model.coverage['2025-12'].valid,79);
+  assert.equal(model.defaultPeriod,'2026-06');assert.equal(normalizeName('Abyei Administrative Area'),'abyeiregion');
 });
 test('preserves the source score and does not fabricate new-period observations',()=>{
   assert.equal(model.cells.get('2025-11/twiceast').score,6.5);assert.equal(model.cells.get('2025-11/twiceast').band,'B2');
@@ -22,7 +21,8 @@ test('edited zero survives; null edited score falls back to original',()=>{
   assert.equal(recordScore({needs_severity_score_NSS_edited:null,needs_severity_score_NSS:5}),5);
 });
 test('conflicting duplicate groups are withheld, identical metrics collapse',()=>{
-  const cell=model.cells.get('2025-10/yei');assert.equal(cell.conflict,true);assert.equal(cell.score,null);assert.equal(cell.row,null);
+  const conflict=createModel([rows[0],{...rows[0],conflict:99}],geo);
+  const cell=[...conflict.cells.values()][0];assert.equal(cell.conflict,true);assert.equal(cell.score,null);assert.equal(cell.row,null);
   const sample=rows.find(r=>r['County.name']==='Twic East'&&r.Month==='November'&&r.Year==='2025');
   const synthetic=createModel([sample,{...sample,_id:'duplicate'}],geo);
   assert.equal(synthetic.cells.get('2025-11/twiceast').score,6.5);assert.equal(synthetic.cells.get('2025-11/twiceast').conflict,false);
@@ -69,7 +69,7 @@ test('CSV quotes text and neutralizes formula prefixes',()=>{
 });
 test('playback contains each calendar month without synthesizing missing records',()=>{
  const months=calendarPeriods(model.periods);
- assert.equal(months.length,36);assert.equal(months[0],'2023-01');assert.equal(months.at(-1),'2025-12');
+ assert.equal(months.length,42);assert.equal(months[0],'2023-01');assert.equal(months.at(-1),'2026-06');
  assert.ok(months.includes('2025-07'));assert.equal(model.coverage['2025-07'],undefined);
  assert.deepEqual(calendarPeriods([]),[]);
  assert.deepEqual(calendarPeriods(['2025-11','2026-02']),['2025-11','2025-12','2026-01','2026-02']);

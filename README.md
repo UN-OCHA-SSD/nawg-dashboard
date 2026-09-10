@@ -1,27 +1,23 @@
 # NAWG dashboard · South Sudan
 
-Combined interactive dashboard for GitHub Pages.
+Interactive monthly dashboard for GitHub Pages.
 
 - Public site: https://un-ocha-ssd.github.io/nawg-dashboard/
 - Repository: https://github.com/UN-OCHA-SSD/nawg-dashboard
 
-## Experience
+## Monthly source: ActivityInfo
 
-Approved full-title masthead, REACH followed by horizontal OCHA, icon navigation and light/dark modes. Eight destinations: national overview, county profiles, trends/persistence, change analysis, needs drivers, data explorer, publications/downloads, and methods/sources.
+All monthly maps, indicators, county profiles, trends, persistence, transitions and data downloads use the same ActivityInfo form, `cdqmo0mmmapb33se`. There is no archive source selector, manual monthly CSV importer or fallback observation dataset. Old links with `source=archive` resolve to ActivityInfo without losing the county, page or reporting month.
 
-The map supports severity bands, NSS, comparable-cycle score changes, individual indicators and annual HNRP 2025/2026 severity. Monthly playback preserves the map camera and page geometry. County charts retain missing values and use dotted guides only between observed endpoints within a framework.
+The 10 September 2026 refresh contains 2,834 dated county/month records across 36 reporting months, January 2023–June 2026. June 2026 covers all 79 counties and is the default period. Another 78 rows have both Year and Month marked “Not classified”; these remain in ActivityInfo but are excluded, with counts in Methods & sources.
 
-Reset controls are available on all eight pages. Analytical reset restores the source-specific default covered cycle, all states/bands, Twic East, comparisons and chart controls; it stops playback and resets map framing. Publication/methodology reset clears their local controls. Evidence source and theme are always retained.
+Source labels are preserved. Earlier A/B1/B2/C/D/E bands are not recoded to the revised A–F scheme. Colours, high-severity membership and band-history labels respect the applicable framework. Direct score comparisons and dotted trend connectors cannot cross December 2025.
 
-## Separate evidence sources
+## Retained references
 
-The default **NAWG analysis archive** is an allowlisted import of the colleague-supplied site: 2,834 records across 36 cycles, through June 2026 (June–July window, August meeting). The initial cycle has 79 usable county scores. Twenty supplied final PDFs are available.
+`data/nawg-reference.json` holds only supplied methodology definitions (band meanings and indicator weights) and the PDF manifest. It contains no observations. The manual archive, annual HNRP values and fixed historical framework sensitivity series have been removed from the current repository and published dashboard. All dashboard figures and data exports derive exclusively from ActivityInfo.
 
-**ActivityInfo snapshot** remains independently selectable. Its current export contains January 2023–December 2025 records; November 2025 is the latest broadly covered month. Historical disagreements are not resolved by borrowing archive records. Public exports omit internal IDs, free-text notes, source coordinates and credentials. Official OCHA/UN map coordinates are retained for mapping.
-
-The archive preserves supplied final bands and its historical label crosswalk. December 2025 starts a revised framework; direct score comparisons across that break are withheld. The imported national framework bridge is explicitly a sensitivity range, not a confidence interval. Annual HNRP severity is not a monthly NAWG score or priority rank.
-
-See [data-quality.md](data-quality.md) for definitions and the browser regressions in [scripts/check-combined-ui.mjs](scripts/check-combined-ui.mjs) and [scripts/check-reset-ui.mjs](scripts/check-reset-ui.mjs) for interaction checks.
+The 20 PDF products remain available as reference documents, never inputs to calculations; ReliefWeb URLs remain placeholders until supplied. Official boundary files and logos remain. Original user CSVs outside this project have not been deleted. Retired tracked files remain recoverable from Git history; this release does not rewrite repository history.
 
 ## Build, test and preview
 
@@ -35,54 +31,26 @@ pnpm test:pages
 pnpm preview --mode pages --host 127.0.0.1 --port 4383 --strictPort
 ```
 
-Open the repository subpath `/nawg-dashboard/`. The deployable directory is **dist/pages/**. Do not publish the repository root or the entire public folder.
+Open `/nawg-dashboard/`. Deploy **dist/pages/** only. Approved browser regressions: `pnpm test:ui`, `pnpm test:reset`, `node scripts/check-county-picker.mjs`, and `QA_URL=http://127.0.0.1:4383/nawg-dashboard node scripts/check-playback-stability.mjs`.
 
-Browser regression: `pnpm test:ui` (uses the separately approved automated Chrome session, default preview on port 4383). It covers all eight routes, 1465/884/783/390 widths, both themes, county search, indicators, source switching, comparisons, CSV/PDF downloads and map layers. Run the camera regression with:
+The interface retains its full-title header, REACH/OCHA logos, eight analytical destinations, top filters, right-aligned searchable county selector, reset controls, maps, playback, and light/dark themes.
 
-Reset regression: `pnpm test:reset` checks global and page-specific defaults, repeated resets, source/theme preservation, map framing, playback cancellation, keyboard focus and responsive layouts.
+## Monthly refresh
 
-```sh
-QA_URL=http://127.0.0.1:4383/nawg-dashboard node scripts/check-playback-stability.mjs
-```
+1. Correct and review records in ActivityInfo.
+2. Keep `ACTIVITYINFO_TOKEN` only in ignored `.env.local` or the local environment. Never put it in a `VITE_` variable or GitHub.
+3. Run `pnpm data:refresh`. This reads the form, validates required fields/dates/geography/scores, creates an allowlisted `data/nawg-public.json`, and updates the ignored private cache only after validation.
+4. Review source exclusions, conflicts, coverage, final scores and historical changes in `data-quality.md`. Successful export is not approval of the underlying assessment.
+5. Build and test. Preview locally. On the user's publish request, commit reviewed changes and push to main; the existing Pages workflow deploys the static release.
 
-## Monthly updates
+The dashboard is a monthly published snapshot, not a live public API connection. Public files exclude free-text notes, internal record IDs, source coordinates and credentials. A limited classification-context label is derived privately from notes/score differences; the note text never enters the public snapshot.
 
-Updates remain manual; there is no scheduled fetch and GitHub Pages needs no API credentials.
+`pnpm data:export` can reproduce an export from the ignored cache. It does not contact ActivityInfo. Prefer a fresh pull for a release. Failed refreshes leave the last validated published snapshot intact.
 
-### ActivityInfo
+## Local live mode and packaging
 
-1. Keep ACTIVITYINFO_TOKEN only in an ignored local .env.local or shell environment. Never use a VITE_ variable, commit the token, or place it in public files.
-2. Run `pnpm data:refresh` after source entry and review. This privately retrieves, validates and allowlists the same form into data/nawg-public.json.
-3. Review coverage/conflicts and new framework fields before publishing. An export succeeding is not source-data approval.
+`pnpm dev --host 127.0.0.1 --port 4381 --strictPort` retains the read-only local API. The footer's “Refresh local ActivityInfo” action updates the local session; it does not publish to GitHub. Both local and public modes use the same allowlist and date treatment.
 
-ActivityInfo refresh updates that source only. It does not overwrite or extend the separate analysis archive.
-
-### Analysis archive and final reports
-
-Import a reviewed update in the colleague site's NAWG_DATA schema with its website/reports directory:
-
-```sh
-node scripts/import-analysis-archive.mjs /path/to/colleague-data.json /path/to/website
-```
-
-The importer validates unique county/cycle rows, score ranges and every supplied cycle's mean, coverage and band counts. It writes data/nawg-archive.json and copies only the manifest's PDF files into public/reports. Original raw notes, internal IDs and the bundled colleague website are not copied.
-
-Do not edit the history or infer additional indicators just to reconcile it with ActivityInfo. A new framework requires explicit adapter and methodology review. New months and report entries are discovered from the updated manifest. Regression expectations for June 2026 should change only after a reviewed historical correction.
-
-ReliefWeb links remain a clearly labelled placeholder in src/Evidence.jsx until confirmed URLs are supplied. The original meeting PPT is not in the public build.
-
-### Publish a reviewed release
-
-1. Run `pnpm build:pages`, `pnpm test`, `pnpm test:pages`, and the browser checks.
-2. Review dist/pages and the new data/publication manifest. All files deployed are publicly downloadable.
-3. After approval, commit the relevant source, allowlisted data and PDFs and push to main.
-
-The existing .github/workflows/pages.yml builds and tests on pushes to main or manual runs, then deploys dist/pages. Actions are pinned. No ActivityInfo credentials are stored on GitHub.
-
-## Local live mode and inherited packaging
-
-`pnpm dev --host 127.0.0.1 --port 4381 --strictPort` retains the read-only local API. Choose ActivityInfo then “Refresh local ActivityInfo” in the footer. Do not expose the local development server publicly.
-
-`pnpm build` retains the inherited local/Worker packaging. It is not used for GitHub Pages; protected Worker and hosting files remain intact. No new dependency was required for the combined interface.
+The inherited `pnpm build` / Worker packaging and protected hosting files remain intact, but GitHub Pages is the only requested public host. No scheduled updates or hosted API credentials are required.
 
 Boundaries and designations do not imply UN endorsement or acceptance.

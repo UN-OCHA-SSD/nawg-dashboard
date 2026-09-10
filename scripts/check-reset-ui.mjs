@@ -24,7 +24,7 @@ const defaults=async()=>{
  assert.equal(await value('Reporting period'),'2026-06');
  if(await page.getByLabel('State',{exact:true}).count())assert.equal(await value('State'),'all');
  assert.match(await page.getByRole('button',{name:'Choose county',exact:true}).innerText(),/Twic East/);
- assert.equal(await value('Evidence source'),'archive');
+ assert.equal(await page.getByLabel('Evidence source',{exact:true}).count(),0);
 };
 try{
  await page.goto(base+'#overview?county=twiceast&period=2026-06&source=archive',{waitUntil:'networkidle'});
@@ -130,16 +130,14 @@ try{
  assert.ok(page.url().includes('period=2026-01'));
 
  await navigate('National overview');
- await page.getByLabel('Evidence source').selectOption('activityinfo');
  await page.getByRole('button',{name:'Switch to dark mode'}).click();
  await page.getByLabel('Reporting period').selectOption('2025-06');
  await reset();
- assert.equal(await value('Reporting period'),'2025-11','source-specific covered default, not sparse latest month');
- assert.equal(await value('Evidence source'),'activityinfo');
+ assert.equal(await value('Reporting period'),'2026-06','latest covered ActivityInfo month');
+ assert.equal(await page.getByLabel('Evidence source',{exact:true}).count(),0);
  assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
  assert.ok(page.url().includes('source=activityinfo'));
- assert.ok(page.url().includes('period=2025-11'));
- await page.getByLabel('Evidence source').selectOption('archive');
+ assert.ok(page.url().includes('period=2026-06'));
  await page.getByRole('button',{name:'Switch to light mode'}).click();
  await fs.mkdir('qa/reset',{recursive:true});
  for(const width of [1465,884,783,390]){
