@@ -1,50 +1,62 @@
-# Data provenance and quality
+# Data provenance and quality · combined dashboard
 
-Checked on 9 September 2026 against the supplied read-only [ActivityInfo form](https://www.activityinfo.org/resources/query/v43/form/cdqmo0mmmapb33se). The private snapshot is deliberately outside public assets. The public release contains a separate allowlisted county-data export, not the raw snapshot.
+Reviewed locally on 9 September 2026. This is validation of the dashboard's transformation and presentation, not independent verification of underlying humanitarian assessments.
 
-| Check | Result |
-| --- | --- |
-| Raw records | 2,281 |
-| Distinct reporting months | 30, January 2023–December 2025 |
-| Boundary features | 79, including Abyei Region |
-| Unmatched county names after reviewed alias | 0 |
-| Invalid year/month rows | 0 |
-| Duplicate county/month groups | 49 |
-| Conflicting metric groups | 36, withheld from scores and trends |
-| Latest broadly covered month | November 2025: 71/79 usable scores |
-| Most recent partial month | December 2025: 8/79 usable scores |
+## Evidence sources
 
-## Rules
+| Source | Coverage in this build | Treatment |
+| --- | --- | --- |
+| Supplied NAWG analysis archive | 2,834 county-cycle records, 36 cycles, January 2023–June 2026 | Default source. June 2026 has 79/79 usable scores. |
+| ActivityInfo public snapshot | 2,281 rows, 30 reported months, January 2023–December 2025 | Separate source. November 2025 has 71/79 usable scores; December has 8/79. |
+| OCHA county boundaries | 79 county polygons, including Abyei Region | Shared map geometry; exact reviewed name aliases only. |
+| Annual HNRP intersectoral severity | 2025 and 2026, scale 1–5 | Separate annual context, never a monthly measure or priority rank. |
+| Final publications | 20 PDFs supplied with the colleague site | Actual local downloads; ReliefWeb URLs still pending. |
 
-- The grain is one county per calendar month. Names are normalized for case/punctuation; there is no fuzzy matching.
-- The explicit `Abyei Administrative Area` → `Abyei Region` alias reconciles the source to boundary SS0001. Source and boundary centre coordinates were checked for consistency. Administrative names do not imply a legal position on boundaries.
-- An available edited NSS or band takes precedence over its original field. Zero is preserved; blank edited scores fall back to originals.
-- Duplicate groups are compared across NSS, band, source severity, vulnerability/trigger scores and all eight indicators. Identical metric groups collapse to one cell; notes are retained. If any of those metrics differs, the entire cell is flagged conflicting. Original variants remain accessible in the county indicator table and downloads. This conservative rule can withhold a score even if the NSS alone agrees.
-- Coverage counts usable, non-conflicting NSS observations over the 79 boundary features; it does not imply that every indicator is complete. The default period is the newest with at least 80% usable NSS coverage, falling back to the newest available period only if none meets that rule.
-- Comparisons use the selected calendar months. Missing/conflicting values yield no numeric difference. Trend gaps are not interpolated, forward-filled or zero-filled. Dotted visual connectors may span interior gaps between observed endpoints; these guides do not supply observations, tooltip estimates or exported values.
-- Band values remain those of the source. Existing records use A/B1/B2/C/D (or unclassified), not the illustrative A–F design categories. Filters and legends discover new source codes by period. No thresholds are inferred and historical bands are not recoded. Any future methodology change must be documented before comparing across methods.
-- Eight source indicator/severity pairs are used. The supplied form has no separate climate or conflict indicators, so these are not invented from the presentation.
-- The county brief is a downloadable HTML document with print/Save as PDF controls. The supplied September 2026 PPT is separately available as a publication; it is not represented as the source of the current 2025 map values.
+Archive input: extracted colleague-data.json (window.NAWG_DATA) from the user-supplied OneDrive_1_9-9-2026 archive. Prepared date: 08 September 2026. Public output: data/nawg-archive.json, produced reproducibly by scripts/import-analysis-archive.mjs. Free-text notes, note indices, record IDs, embedded geography and unnecessary site metadata are excluded.
 
-## Trend connector chart contract
+ActivityInfo input: the supplied read-only form cdqmo0mmmapb33se. The public snapshot remains data/nawg-public.json; token and private cache stay outside public assets. It has 49 duplicate county/month groups, including 36 conflicting metric groups. Conflicts are withheld; identical metrics collapse. The supplied archive and ActivityInfo sometimes disagree historically. The application does not average, backfill or select across these sources.
 
-- Question: how does the selected county's reported score change over calendar months? Observed values remain the evidence; dotted connectors make interior gaps easier to follow without claiming measurements within them.
-- Family/variant: monthly line with solid observed segments, observed-point markers and dotted gap guides. Use the existing dashboard-native Recharts renderer in the overview and county page, including NSS, vulnerability and trigger measures.
-- Grain/sufficiency: the existing 12/24-month calendar series from ActivityInfo; draw a guide only across one or more unavailable months bounded by finite observed values. Preserve zero, conflicts and nulls. No leading/trailing extrapolation; retain the existing no-data state.
-- Palette/encoding: existing single blue chart-line token in both themes; solid versus dotted lines distinguish observed runs from guides without relying on colour. No markers on unavailable months.
-- Footprint/delivery: unchanged responsive trend canvas and constant explanatory caption on the local dashboard at port 4381. Tooltips and CSV use the original monthly series, not derived estimates.
-- QA: test gap endpoints, multiple gaps, zero, conflicts, sparse series and unchanged source/export values. Build both routes from the shared component; rendered light/dark and narrow-width QA remains pending the recorded browser-testing choice.
+## Grain, periods and aggregation
+
+- One resolved county per cycle. The archive cycle is the first month of a two-month analysis window; the meeting happens later. June 2026 means June–July analysis with an August meeting.
+- Coverage counts counties with usable NSS, not completeness of every indicator. The latest cycle with at least 80% coverage is initially selected.
+- NSS is the supplied final/edited score with first-level/original fallback where appropriate. Numeric zero remains valid.
+- Means and medians use all non-missing scores in the current county selection with equal county weight, never population weighting. Missing values do not become zero.
+- State and band filters recompute overview summary figures and chart cohorts. The inspector remains the explicitly selected county; if outside map filters it is labelled. Other analytical pages expose state filters, not hidden band restrictions.
+- Comparisons pair counties with usable observations in both cycles and use the same framework. They do not compare independently varying national denominators.
+- Persistent high severity defaults to bands A–B (archive), with an explicit severe-or-above A–C alternative. Threshold is at least 80% of observed cycles, up to the last 12 reported cycles in the selected framework. At least min(3, window cycle count) observed cycles are required; observed and possible cycle counts are displayed.
+- Associations and indicator contributions are descriptive, not causal claims. Classification shares use non-missing classified counties as their denominator.
+
+## Framework and classification
+
+The revised archive framework starts December 2025. Climate and conflict are genuine source fields in that revised archive, not inferred ActivityInfo indicators. Earlier records explicitly show those fields as not in the framework.
+
+The supplied archive harmonises earlier band labels A/B1/B2/C/D/E to A/B/C/D/E/F. The adapter retains the source label in audit and export. ActivityInfo retains its own period-specific labels. Relabelling does not make scores comparable across frameworks.
+
+Final bands are never recalculated from numeric NSS. IPC restrictions and meeting adjustments are preserved as supplied adjustment codes. June 2026 has 12 Band A counties: 10 coded IPC methodological restriction, one meeting adjustment, and one no adjustment. The two IPC phase-4-or-above counts are separate signals, not population estimates.
+
+County and national trend lines break at the framework revision. Dotted county guides bridge interior missing/conflicting observations only within a framework; they do not create values, tooltip estimates or export rows with inferred scores. No leading/trailing extrapolation.
+
+The national framework bridge is imported from the colleague's sensitivity analysis and retained for all 79 counties independently of state filters. It reapplies earlier UVS/IPC weights, excludes climate/conflict, retains contextual adjustments, caps at 10, and varies low displacement-flow treatment between bounds. Its published-series values reconcile to the archive. Bounds are an imported analytical model, not independently re-estimated assessment evidence or confidence intervals.
+
+## Reconciliation checks
+
+Every archive cycle's coverage, mean (within rounding tolerance 0.0006) and band totals reconciles to the supplied cycle metadata. All 2,834 records map to official county polygons without invalid dates, duplicate keys or unmatched names.
+
+June 2026: 79 scored counties, mean NSS 6.328987342 (displayed 6.33), median 6.16, A=12, B=6, C=39, D=21, E=1, F=0. There are 18 counties in A–B and eight band changes versus May 2026 across 79 paired counties. Twic East: final 6.60, Band C, +0.25 versus May.
+
+Annual HNRP values stay independent of the selected cycle, including cycles with no monthly data. The reference is labelled annual and is never presented as a priority rank.
 
 ## Geographic source
 
-[OCHA Common Operational Datasets, global Admin2 layer](https://gis.unocha.org/server/rest/services/COD/GLB_COD_Admin2/MapServer/0), queried with `adm0_pcode='SS'`, WGS84, simplification tolerance 0.002 degrees and coordinate precision 5. `public/data/counties.geojson` retains county/state names, pcodes and label centres. No generated geography is used.
+County geometry: [OCHA COD global Admin2](https://gis.unocha.org/server/rest/services/COD/GLB_COD_Admin2/MapServer/0), South Sudan filter, WGS84, 0.002-degree simplification, five-decimal coordinates. Existing name/pcode and label-centre attributes are retained.
 
-## Readiness
+International lines: [UN World International Boundaries](https://gis.unocha.org/server/rest/services/Hosted/World_International_Boundaries__Adm0___Line/FeatureServer/0), 24 regional features with source line-type styles. Solid, dashed and dotted special-status boundaries remain distinguishable. Source layers can differ in detail. The archive's Abyei and ActivityInfo's Abyei Administrative Area match the OCHA Abyei Region polygon.
 
-GitHub Pages publication was authorized for `UN-OCHA-SSD/nawg-dashboard`. The static release keeps the interactive React/Leaflet/Recharts interface and approved county metrics; it excludes free-text notes, record identifiers, source coordinates, credentials and the original meeting PPT. All score, band and conflict decisions are checked against the private model before export. Refreshing the public page only reloads published data; monthly data changes require a reviewed export and deployment. Public data files are downloadable by visitors. No ActivityInfo token is stored in GitHub or the published site.
+Names, boundaries and designations do not imply UN endorsement or acceptance.
 
-The annotation revision adds 24 regional line features from [UN World International Boundaries](https://gis.unocha.org/server/rest/services/Hosted/World_International_Boundaries__Adm0___Line/FeatureServer/0), queried over 20°E–39°E / 2°S–16°N with `bdytyp_integer > 0`, WGS84, 0.002° simplification and five decimal places. `public/data/international-boundaries.geojson` retains source URL, retrieval time and line-type attributes. Solid international, dashed undetermined/administrative and dotted separation lines are distinguished. County and international layers have independent provenance and may differ slightly in detail. Boundaries do not imply UN endorsement.
+## Release boundary
 
-The timeline contains all 36 calendar months across the source range although only 30 have reports. Unreported months remain missing; no scores are synthesized. Date menus now show dates only, with coverage separately explained. Indicator cards preserve exact source classifications and inputs; raw inputs are not converted to comparable percentages. Conflicting submissions remain separately inspectable and do not replace withheld county scores. Raw IDs remain in private/local downloads only; public exports omit them, and the former record-ID heading is not displayed. Monthly PDF/ReliefWeb slots have null destinations and disabled actions; they do not imply published products.
+The combined build is prepared for GitHub Pages but has not replaced the public deployment. It contains approved county-level metrics, official geometry, actual partner logos and supplied final PDFs. It excludes original meeting PowerPoint, free-text source notes, internal record IDs and credentials. New monthly inputs and PDFs require human review before a push triggers deployment.
 
-The public release supports partner exploration of source-reported county conditions using the authorized county-level export. It is not a verified 2026 meeting dataset. Before publishing new monthly data, review conflicts, administrative coverage and band methodology. Review any meeting materials separately before making them public. The UI surfaces coverage and limitations rather than certifying the underlying assessments.
+Browser checks cover source switching, all routes, maps, filters, downloads, missing periods and the timeline's preservation of camera, browser scale, scroll and page dimensions. See design-qa.md for the rendered review and evidence paths.

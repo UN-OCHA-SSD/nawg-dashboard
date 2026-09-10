@@ -3,13 +3,16 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {Plus,Minus,ArrowsOut,ArrowUp} from '@phosphor-icons/react';
 import {BAND_COLORS,severityInfo} from './data-model.mjs';
+import {cellColor,comparable} from './analytics-model.mjs';
 import {resizePreservingView} from './map-viewport.mjs';
-export function mapValue(cell,indicator) {
+export function mapValue(cell,indicator,previous=null,canCompare=false) {
   if(!cell?.row||cell.conflict) return {color:'#b9c2cd',label:cell?.conflict?'Conflicting records':'No data'};
-  if(indicator==='band')return {color:BAND_COLORS[cell.band]||'#b9c2cd',label:'Band '+cell.band};
+  if(indicator==='score'){const t=Math.min(1,Math.max(0,cell.score/10));return {color:'rgb('+[228,240,252].map((v,i)=>Math.round(v+([6,92,178][i]-v)*t)).join(',')+')',label:'NSS '+cell.score.toFixed(2)};}
+  if(indicator==='change'){if(!canCompare||previous?.score==null||cell.score==null)return {color:'#b9c2cd',label:'No comparable previous observation'};const d=cell.score-previous.score;return {color:d>0.005?'#dc4b57':d<-.005?'#329d93':'#f6f5ed',label:(d>0?'+':'')+d.toFixed(2)+' points vs comparison'};}
+  if(indicator==='band')return {color:cellColor(cell),label:'Band '+cell.band};
   return severityInfo(cell.row[indicator]);
 }
-export function CountyMap({model,period,selected,onSelect,visibleKeys,indicator='band',countyMode=false}) {
+export function CountyMap({model,period,selected,onSelect,visibleKeys,indicator='band',countyMode=false,compare=''}) {
   const element=useRef(null),map=useRef(null),layers=useRef(null),labels=useRef(null),props=useRef();
   const savedView=useRef(null),fittedCounty=useRef(selected);
   props.current={model,period,selected,onSelect,visibleKeys,indicator,countyMode};
@@ -58,16 +61,16 @@ export function CountyMap({model,period,selected,onSelect,visibleKeys,indicator=
   useEffect(()=>{
     if(!layers.current)return;
     layers.current.eachLayer(l=>{
-      const key=l.feature.key,cell=model.cells.get(period+'/'+key),value=mapValue(cell,indicator),visible=visibleKeys.has(key);
+      const key=l.feature.key,cell=model.cells.get(period+'/'+key),value=indicator.startsWith('hpc:')?(model.hpcByCounty?.[key]?.[indicator.slice(4)]!=null?{...severityInfo('Phase '+model.hpcByCounty[key][indicator.slice(4)]),label:'HNRP '+indicator.slice(4)+' · annual severity '+model.hpcByCounty[key][indicator.slice(4)]+'/5'}:{color:'#b9c2cd',label:'No annual HNRP data'}):mapValue(cell,indicator,model.cells.get(compare+'/'+key),comparable(model,period,compare)),visible=visibleKeys.has(key);
       l.setStyle({fillColor:value.color,fillOpacity:visible?0.96:0.13,color:key===selected?'#0879fa':'#aa9272',opacity:visible?1:0.25,weight:key===selected?2.6:0.7});
       if(key===selected)l.bringToFront();
       const content=document.createElement('div'),strong=document.createElement('strong'),detail=document.createElement('div');
-      strong.textContent=l.feature.name;detail.textContent=value.label+(cell?.score!=null?' · NSS '+cell.score.toFixed(2):'');content.append(strong,detail);
+      strong.textContent=l.feature.name;detail.textContent=value.label+(!indicator.startsWith('hpc:')&&cell?.score!=null?' · NSS '+cell.score.toFixed(2):'');content.append(strong,detail);
       if(l.getTooltip())l.setTooltipContent(content);else l.bindTooltip(content,{sticky:true,className:'map-hover'});
       const el=l.getElement();if(el){el.setAttribute('tabindex',visible?'0':'-1');el.setAttribute('role','button');el.setAttribute('aria-label',l.feature.name+' — '+detail.textContent);el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(key);}};}
     });
     drawLabels();
-  },[model,period,selected,indicator,visibleKeys,countyMode]);
+  },[model,period,selected,indicator,visibleKeys,countyMode,compare]);
   useEffect(()=>{
     if(countyMode&&fittedCounty.current!==selected)fit();
     fittedCounty.current=selected;

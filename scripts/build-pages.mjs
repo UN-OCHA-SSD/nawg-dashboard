@@ -12,5 +12,11 @@ await fs.mkdir(new URL('data/',output),{recursive:true});
 // No blanket public/ copy: the original meeting PPT remains local.
 for(const name of ['counties.geojson','international-boundaries.geojson'])await fs.copyFile(new URL('public/data/'+name,root),new URL('data/'+name,output));
 await fs.copyFile(new URL('data/nawg-public.json',root),new URL('data/nawg-public.json',output));
+const archive=JSON.parse(await fs.readFile(new URL('data/nawg-archive.json',root),'utf8'));
+await fs.mkdir(new URL('reports/',output),{recursive:true});
+for(const report of archive.reports){
+  if(!/^reports\/[A-Za-z0-9_.-]+\.pdf$/.test(report.file))throw new Error('Invalid report path');
+  await fs.copyFile(new URL('public/'+report.file,root),new URL(report.file,output));
+}
 await fs.writeFile(new URL('.nojekyll',output),'');
 console.log('GitHub Pages output ready in dist/pages (public data and static assets only).');

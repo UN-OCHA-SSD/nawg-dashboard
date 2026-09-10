@@ -9,11 +9,12 @@
     "build:pages": "node scripts/build-pages.mjs",
     "data:export": "node scripts/export-public-snapshot.mjs",
     "data:refresh": "node scripts/export-public-snapshot.mjs --refresh",
-    "test:pages": "node --test tests/public-snapshot.test.mjs tests/map-viewport.test.mjs",
+    "test:pages": "node --test tests/public-snapshot.test.mjs tests/map-viewport.test.mjs tests/analytics-model.test.mjs",
     "preview": "vite preview",
     "start": "node server/serve.mjs",
-    "test": "node --test tests/data-model.test.mjs tests/map-viewport.test.mjs",
-    "test:ui": "node scripts/check-ui.mjs",
+    "test": "node --test tests/data-model.test.mjs tests/map-viewport.test.mjs tests/analytics-model.test.mjs",
+    "test:ui": "node scripts/check-combined-ui.mjs",
+    "test:reset": "node scripts/check-reset-ui.mjs",
     "test:sites": "node --test tests/sites-worker.test.mjs"
   },
   "dependencies": {

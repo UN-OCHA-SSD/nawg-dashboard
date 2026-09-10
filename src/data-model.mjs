@@ -73,6 +73,7 @@ export function calendarPeriods(periods) {
 }
 export function severityInfo(value) {
   const v=String(value??'Not available'), lower=v.toLowerCase();
+  if(lower==='none recorded')return {label:v,level:0,max:4,color:'#f4f6f3'};
   if(lower.includes('pockets of 5')) return {label:v,level:4,max:5,color:'#c52c42'};
   const p=lower.match(/phase\s*(\d)/);
   if(p) return {label:v,level:+p[1],max:5,color:['','#f9ebc2','#f6d897','#ffab79','#eb6260','#c52c42'][+p[1]] || '#b9c2cd'};
