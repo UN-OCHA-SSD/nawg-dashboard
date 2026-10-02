@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "study": {
+    "title": "NAWG framework comparison: January–June 2026",
+    "sourceOrganization": "NAWG colleague reference study",
+    "sourceFile": "inputs/framework_bridge_2026.csv",
+    "sourcePackage": "OneDrive_1_9-9-2026.zip",
+    "sourceReport": "public/reports/trend_Trend-analysis-January-to-June-2026.pdf",
+    "comparison": "2026 mean NSS re-expressed on the 2025 framework, compared with published 2025 mean NSS for the same month",
+    "scope": "National aggregate only; no county-level re-expressed observations are supplied.",
+    "expectedCountyCount": 79,
+    "sensitivity": {
+      "meaning": "Lower and upper values are the study's displacement-flow sensitivity range. They are not a confidence interval.",
+      "lowerSourceField": "mean_NSS_re_lower",
+      "upperSourceField": "mean_NSS_re_upper",
+      "midpointSourceField": "mean_NSS_re_mid",
+      "alternativeAssumptionNames": null,
+      "alternativeAssumptionNote": "The supplied CSV does not name the alternative displacement-flow assumptions. The original calculation formula and county-level sensitivity values were not included in the package and are not reproduced here."
+    },
+    "methodSummary": "The companion trend report describes applying 2025 weights and restriction logic to 2026 inputs, excluding climate and conflict, omitting the 2026 automatic adjustment, and adding contextual review once after re-scaling. This reference package supplies only national aggregate sensitivity results; it does not provide a reproducible calculation specification.",
+    "provenanceNote": "Transcribed from the supplied colleague package's inputs/framework_bridge_2026.csv. The colleague builder validates and loads this precomputed reference; it does not calculate the bridge.",
+    "limitations": [
+      "The sensitivity bounds are reference-study aggregates and are not recalculated from ActivityInfo rows.",
+      "The exact alternative displacement-flow assumption labels, per-county calculations, adjustment transfer and cap details are not provided in the supplied package.",
+      "Reference bounds are shown only when both ActivityInfo national periods have 79 resolved counties and their published means match the study's aggregates within 0.00000001 NSS points.",
+      "ActivityInfo published means remain the dashboard's observed values; reference published means are validation values only."
+    ]
+  },
+  "cycles": [
+    {"cycle":"2026-01","priorCycle":"2025-01","published2026Mean":5.9775949367088606,"lowerMean":6.361308016869199,"upperMean":6.553291139234177,"midpointMean":6.457299578051687,"published2025Mean":6.178101265822785,"label":"Jan"},
+    {"cycle":"2026-02","priorCycle":"2025-02","published2026Mean":5.934303797468354,"lowerMean":6.360253164550633,"upperMean":6.543797468348101,"midpointMean":6.452025316449367,"published2025Mean":6.170886075949367,"label":"Feb"},
+    {"cycle":"2026-03","priorCycle":"2025-03","published2026Mean":6.274556962025317,"lowerMean":6.734472573831224,"upperMean":6.945443037968355,"midpointMean":6.83995780589979,"published2025Mean":6.39126582278481,"label":"Mar"},
+    {"cycle":"2026-04","priorCycle":"2025-04","published2026Mean":6.268987341772152,"lowerMean":6.695527426156118,"upperMean":6.921265822778481,"midpointMean":6.808396624467299,"published2025Mean":6.490379746835443,"label":"Apr"},
+    {"cycle":"2026-05","priorCycle":"2025-05","published2026Mean":6.3148101265822785,"lowerMean":6.6522362869156115,"upperMean":6.880084388181435,"midpointMean":6.7661603375485235,"published2025Mean":6.483037974683544,"label":"May"},
+    {"cycle":"2026-06","priorCycle":"2025-06","published2026Mean":6.328987341772152,"lowerMean":6.655021097042194,"upperMean":6.895527426156118,"midpointMean":6.775274261599156,"published2025Mean":6.436582278481013,"label":"Jun"}
+  ]
+}

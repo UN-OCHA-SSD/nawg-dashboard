@@ -15,9 +15,13 @@ Source labels are preserved. Earlier A/B1/B2/C/D/E bands are not recoded to the 
 
 ## Retained references
 
-`data/nawg-reference.json` holds only supplied methodology definitions (band meanings and indicator weights) and the PDF manifest. It contains no observations. The manual archive, annual HNRP values and fixed historical framework sensitivity series have been removed from the current repository and published dashboard. All dashboard figures and data exports derive exclusively from ActivityInfo.
+`data/nawg-reference.json` holds only supplied methodology definitions (band meanings and indicator weights) and the PDF manifest. It contains no observations. The manual monthly archive and annual HNRP values remain removed. Operational dashboard figures and county exports derive exclusively from ActivityInfo.
 
-The 20 PDF products remain available as reference documents, never inputs to calculations; ReliefWeb URLs remain placeholders until supplied. Official boundary files and logos remain. Original user CSVs outside this project have not been deleted. Retired tracked files remain recoverable from Git history; this release does not rewrite repository history.
+On 1 October 2026 the user approved a separate reference comparison: `data/framework-comparison-reference.json` contains only the six national January–June 2026 sensitivity results supplied with the colleague's study. The published 2025/2026 lines are calculated from ActivityInfo. Reference bounds are shown only for all 79 counties, complete resolved coverage in both years, and published means matching the study's inputs within floating-point tolerance. Missing, conflicting, changed or filtered inputs withhold the reference range; no reference value fills an ActivityInfo observation. The adjustment workbook is unavailable, so the bounds are not independently reproduced, interpolated or extended. They represent displacement-flow methodological sensitivity, not a confidence interval. A new validated study or calculation workbook is required to extend the comparison.
+
+The revised climate maximum is 1.0; revised UVS and ATS maxima total 2 and 8. Source climate values and final NSS are unchanged. Methodology renders a native clickable flowchart matching the supplied framework image, with discussion branches, contextual analysis, final classification, zoom/fit controls and internal panning on narrow screens. National charts default to an explicitly truncated 5–7.5 axis with automatic expansion for out-of-range filtered values and a full 0–10 option.
+
+The 20 PDF products remain available as reference documents; their figures never fill operational observations. The comparison method description follows the companion trend report, while supplied endpoints are retained as reference outputs. ReliefWeb URLs remain placeholders until supplied. Official boundary files and logos remain. Original user CSVs outside this project have not been deleted. Retired tracked files remain recoverable from Git history; this release does not rewrite repository history.
 
 ## Build, test and preview
 

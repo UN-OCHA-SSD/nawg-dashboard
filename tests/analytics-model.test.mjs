@@ -70,3 +70,9 @@ test('reference publications remain safe PDF downloads, not monthly data input',
  assert.equal(reference.reports.length,20);assert.equal(reference.source,'Supplied NAWG reference material');
  assert.equal(reference.bridge,undefined);
 });
+test('revised framework maxima agree with UVS 2 and ATS 8; climate contributes up to 1',()=>{
+ assert.equal(reference.indicators.find(i=>i.id==='climate').max_v2,1);
+ for(const [pillar,total] of [['UVS',2],['ATS',8]]){
+  assert.equal(reference.indicators.filter(i=>i.group===pillar).reduce((n,i)=>n+i.max_v2,0),total);
+ }
+});

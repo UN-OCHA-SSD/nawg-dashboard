@@ -34,6 +34,11 @@
 }
 .combined-app .evidence-filter select{width:194px}
 .national-charts .chart-canvas{direction:ltr}
+.national-charts .card-heading{flex-wrap:wrap}
+.chart-scale-toggle{display:flex;gap:2px;border:1px solid var(--line);border-radius:6px;padding:2px;background:var(--soft);font-size:11px}
+.chart-scale-toggle button{padding:5px 8px;border-radius:4px;color:var(--muted);white-space:nowrap}
+.chart-scale-toggle button[aria-pressed="true"]{background:var(--panel);color:var(--accent);box-shadow:0 1px 3px #152a4212}
+.compact-charts .chart-options{display:flex}
 .combined-app .local-map .map-controls{bottom:auto}
 .selected-outside{color:var(--warning)}
 .combined-app .reset-filters{flex-shrink:0;min-height:39px;white-space:nowrap;color:var(--accent);gap:7px}

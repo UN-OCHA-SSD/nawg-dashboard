@@ -25,7 +25,8 @@ export function activityModel(payload,geo,reference){
   const rows=payload.rows.map(r=>({...r,classification_context:classificationContext(r)}));
   const model=createModel(rows,geo);
   // References contain only definitions and publication metadata, never
-  // observations. Every dashboard figure is derived from ActivityInfo.
+  // observations. Operational dashboard figures are derived from ActivityInfo;
+  // any separately labelled framework study is handled outside this model.
   return {...model,rows,sourceKind:'activityinfo',sourceLabel:'ActivityInfo',indicators:INDICATORS,reference,fetchedAt:payload.fetchedAt,quality:payload.quality};
 }
 export function summary(model,counties,period){

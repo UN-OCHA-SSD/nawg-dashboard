@@ -123,10 +123,12 @@ try{
  assert.equal(await page.locator('.report-library article').count(),20);
  assert.ok(page.url().includes('period=2026-01'));
  await navigate('Methodology & sources');
- await page.getByRole('button',{name:/View supplied methodology diagram/}).click();
- await page.locator('.framework-image').waitFor({state:'visible'});
+ await page.locator('.framework-diagram').waitFor({state:'visible'});
+ await page.locator('#framework-climate').click();
+ await page.locator('.framework-detail.is-open').waitFor({state:'visible'});
  await reset();
- assert.equal(await page.locator('.framework-image').count(),0);
+ assert.equal(await page.locator('.framework-detail.is-open').count(),0);
+ assert.equal(await page.locator('.framework-diagram').count(),1);
  assert.ok(page.url().includes('period=2026-01'));
 
  await navigate('National overview');
