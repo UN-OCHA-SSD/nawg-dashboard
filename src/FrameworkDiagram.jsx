@@ -2,6 +2,7 @@ import React, {useId, useMemo, useState} from 'react';
 import {MagnifyingGlassPlus, MagnifyingGlassMinus, CornersOut, ArrowCounterClockwise, X} from '@phosphor-icons/react';
 import referenceData from '../data/nawg-reference.json';
 import './framework-diagram.css';
+import {FrameworkExplanation} from './FrameworkExplanation.jsx';
 
 // Coordinates follow the supplied framework flowchart (2048 × 868).
 // These are interactive methodological UI nodes, not a raster illustration.
@@ -101,7 +102,7 @@ export default function FrameworkDiagram({reference=referenceData,className=''})
    </svg>
   </div>
   <aside className={'framework-detail'+(selected?' is-open':'')} aria-live="polite" aria-label="Framework definition">
-   {selected?<><div><span className="framework-detail-label">Framework definition</span><button type="button" className="icon-button" onClick={()=>setSelected(null)} aria-label="Close definition"><X size={18}/></button></div><h4>{selected.label}</h4>{selected.max!=null&&<p className="framework-max">Revised maximum contribution: {selected.max.toFixed(1)} points</p>}<p>{selected.detail}</p></>:<p>Select an element to explore its definition. The diagram explains the revised methodology; it does not recalculate ActivityInfo scores or bands.</p>}
+   {selected?<><div className="framework-detail-heading"><span className="framework-detail-label">Framework definition</span><button type="button" className="icon-button" onClick={()=>setSelected(null)} aria-label="Close definition"><X size={18}/></button></div><h4>{selected.label}</h4>{selected.max!=null&&<p className="framework-max">Revised maximum contribution: {selected.max.toFixed(1)} points</p>}<FrameworkExplanation key={selected.id} node={selected}/></>:<p>Select an element to explore its definition. The diagram explains the revised methodology; it does not recalculate ActivityInfo scores or bands.</p>}
   </aside>
  </section>;
 }

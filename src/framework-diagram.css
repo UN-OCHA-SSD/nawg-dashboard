@@ -33,7 +33,7 @@
 .flow-band text{font-size:22px;font-weight:650;pointer-events:none}
 .flow-band:hover rect,.flow-band:focus-visible rect,.flow-band[aria-pressed="true"] rect{stroke:var(--accent);stroke-width:4}
 .framework-detail{margin-top:15px;min-height:76px;padding:15px 17px;border:1px solid var(--line);border-radius:8px;background:var(--soft);color:var(--muted);font-size:13px;line-height:1.7}
-.framework-detail>div{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.framework-detail>.framework-detail-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .framework-detail-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:600}
 .framework-detail h4{font-size:15px;color:var(--text);margin:5px 0}
 .framework-detail p{margin-top:4px}

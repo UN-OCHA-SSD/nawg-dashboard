@@ -1,0 +1,472 @@
+{
+  "source": {
+    "title": "Needs Analysis Working Group analytical framework",
+    "file": "reports/framework_NAWG-analytical-framework-and-methodology.pdf",
+    "pages": 13,
+    "sha256": "9e864a25ab64436759b397f627da579a5c1557b23825f24f67b876f271858bb3"
+  },
+  "nodes": {
+    "demog": {
+      "pages": [
+        4,
+        5
+      ],
+      "weight": 0.5,
+      "paragraphs": [
+        "Measures structural vulnerability using the proportions of female-headed households and households with a person with a disability. FSNMS/ISNA provides annual or biannual inputs.",
+        "The combined demographic indicator uses percentile-based categories. Its base score is multiplied by a weight of 0.5, so the revised maximum contribution is 0.5."
+      ],
+      "scoring": "percentile"
+    },
+    "stock": {
+      "pages": [
+        5
+      ],
+      "weight": 0.5,
+      "paragraphs": [
+        "Measures IDPs and/or returnees as a proportion of the county population, rather than the number arriving during the month.",
+        "Sources include IOM DTM mobility tracking (quarterly) and ISNA/FSNMS (annual or biannual). Percentile-based base scores receive a weight of 0.5."
+      ],
+      "scoring": "percentile"
+    },
+    "ipclong": {
+      "pages": [
+        5,
+        6
+      ],
+      "weight": 1,
+      "paragraphs": [
+        "Uses the mean county IPC Acute Food Insecurity classification over 2019–2025 to describe chronic vulnerability, not the current acute shock.",
+        "IPC phases receive values 1, 2, 3 and 4; Phase 4 with pockets of Phase 5 receives 4.5. The resulting historical mean is scored with a weight of 1.0."
+      ],
+      "scores": [
+        [
+          "Very high",
+          "Historical mean ≥ 4",
+          "1"
+        ],
+        [
+          "High",
+          "3 ≤ mean < 4",
+          "0.75"
+        ],
+        [
+          "Moderate",
+          "2 ≤ mean < 3",
+          "0.5"
+        ],
+        [
+          "Low",
+          "1 ≤ mean < 2",
+          "0.25"
+        ]
+      ]
+    },
+    "protection": {
+      "pages": [
+        7
+      ],
+      "weight": 1,
+      "paragraphs": [
+        "Uses the Protection Cluster Protection Risk Monitoring System (PRMS): protection risks are weighted, combined and normalised into a severity measure.",
+        "The revised pillar weight is 1.0. The source table lists base scores of 1, 0.75, 0.5 and 0.25 for Very high, High, Moderate and Low. The detailed risk indicators and thresholds are on page 7."
+      ],
+      "note": "The source table does not specify how a PRMS value exactly equal to 1.36 is classified. This explanation does not resolve that boundary or recalculate observations."
+    },
+    "flow": {
+      "pages": [
+        7
+      ],
+      "weight": 1,
+      "paragraphs": [
+        "Measures the number of newly arriving displaced people and/or returning returnees, using monthly IOM DTM event tracking or other verifiable assessment reports.",
+        "This is a flow, distinct from the displacement stock in the vulnerability layer. The source table uses arrival thresholds around 2,500, 5,000 and 10,000 people, base scores from 0 to 1, and a weight of 1.0."
+      ],
+      "note": "The source table's strict inequalities leave exactly 2,500 and 5,000 arrivals unspecified. Refer to page 7 and confirm these boundaries with the framework owner before implementing a new calculation."
+    },
+    "disease": {
+      "pages": [
+        7,
+        8
+      ],
+      "weight": 1,
+      "paragraphs": [
+        "Uses WHO/Health Cluster IDSR reports of acute watery diarrhoea, measles, acute respiratory infection and malaria, as a proportion of consultations reported at county level.",
+        "The incidence assessment uses thresholds relative to historic national rates. Where reliable confirmed-outbreak data exists, it replaces the aggregate incidence indicator and receives a base score of 1. The pillar weight is 1.0."
+      ]
+    },
+    "afi": {
+      "pages": [
+        8,
+        9,
+        11
+      ],
+      "weight": 1.5,
+      "paragraphs": [
+        "Uses IPC Acute Food Insecurity current or projected classifications, and FEWS NET where available. The framework describes relevant IPC analysis periods as valid for four months.",
+        "A base score is multiplied by a revised weight of 1.5. IPC Phase 5 or Phase 4 with pockets of Phase 5 also requires Band A; ordinary Phase 4 requires at least Band C."
+      ],
+      "scores": [
+        [
+          "Catastrophic / emergency with catastrophic pockets",
+          "IPC AFI Phase 5, or Phase 4 with pockets of Phase 5",
+          "1"
+        ],
+        [
+          "Emergency",
+          "IPC AFI Phase 4",
+          "0.75"
+        ],
+        [
+          "Crisis",
+          "IPC AFI Phase 3",
+          "0.5"
+        ],
+        [
+          "Minimal / stressed",
+          "IPC AFI Phases 1–2",
+          "0"
+        ]
+      ]
+    },
+    "amn": {
+      "pages": [
+        9,
+        11
+      ],
+      "weight": 1.5,
+      "paragraphs": [
+        "Uses IPC Acute Malnutrition classifications and NIWG SMART survey evidence, including weight-for-height, MUAC and bilateral oedema. IPC current/projected periods are described as valid for four months.",
+        "The revised scoring table applies a weight of 1.5 to the base scores below. Phase 5 requires Band A; Phase 4 requires at least Band C."
+      ],
+      "scores": [
+        [
+          "Extremely critical / critical",
+          "IPC AMN Phases 5–4",
+          "1"
+        ],
+        [
+          "Serious",
+          "IPC AMN Phase 3",
+          "0.75"
+        ],
+        [
+          "Alert",
+          "IPC AMN Phase 2",
+          "0.5"
+        ],
+        [
+          "Acceptable",
+          "IPC AMN Phase 1",
+          "0"
+        ]
+      ],
+      "note": "Page 9 is internally inconsistent: the scoring table gives a weight of 1.5 and maximum base score of 1, but its prose refers to “score 2.” The dashboard retains the approved 1.5 maximum and source-reported values; the prose needs confirmation."
+    },
+    "conflict": {
+      "pages": [
+        9
+      ],
+      "weight": 1,
+      "paragraphs": [
+        "Uses monthly ACLED and PLSO incidents relevant to humanitarian impact, including conflict-related sexual violence, forced recruitment of children, targeted civilian killings and targeted property destruction.",
+        "County incident measures are standardised and combined using the maximum of the available standardised source scores. If only one source is available, it is used; no conflict data is flagged as data-missing for contextual analysis, not treated as evidence of no conflict."
+      ],
+      "scoring": "percentile"
+    },
+    "climate": {
+      "pages": [
+        10
+      ],
+      "weight": 1,
+      "paragraphs": [
+        "Combines available monthly county evidence on flood displacement, satellite-derived flood extent or exposure, drought stress (FAO ASI and NDVI anomaly), and CHIRPS rainfall anomalies.",
+        "Sub-components are standardised with percentile-based thresholds and combined with equal sub-weights. The pillar weight and maximum contribution are 1.0.",
+        "Insufficient satellite coverage is flagged as data-insufficient. Reliable partner information can inform contextual review; missing coverage is not evidence of no climate impact."
+      ],
+      "scoring": "percentile"
+    },
+    "uvs-result": {
+      "pages": [
+        3,
+        4,
+        5
+      ],
+      "paragraphs": [
+        "Combines demographic vulnerability, displacement stock and longitudinal food insecurity. Their revised maximum contributions are 0.5, 0.5 and 1.0 respectively.",
+        "The Underlying Vulnerability Score ranges from 0 to 2 and accounts for 20% of the possible first-level NSS. Higher values indicate greater structural vulnerability."
+      ]
+    },
+    "ats-result": {
+      "pages": [
+        3,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "paragraphs": [
+        "Combines five shock-related pillars—protection, displacement flows, disease, conflict and climate—with two outcomes: acute food insecurity and acute malnutrition.",
+        "The five shock pillars contribute up to 1.0 each; AFI and AMN contribute up to 1.5 each. The total ranges from 0 to 8 and accounts for 80% of the possible first-level NSS."
+      ]
+    },
+    "qualitative-overlay": {
+      "pages": [
+        2
+      ],
+      "paragraphs": [
+        "NAWG can consider qualitative reports alongside the trigger data and adjust pillar scores using evidence shared with the team.",
+        "The overlay belongs to the trigger-analysis process; it is not a separate numerical pillar added by this dashboard."
+      ]
+    },
+    "method-restrictions": {
+      "pages": [
+        11
+      ],
+      "paragraphs": [
+        "IPC restrictions prevent extreme food-security or nutrition outcomes from being obscured by lower scores in other pillars."
+      ],
+      "bullets": [
+        "IPC AFI Phase 5 or Phase 4 with pockets of Phase 5: automatically assign Band A.",
+        "IPC AMN Phase 5 (Extremely critical): automatically assign Band A.",
+        "IPC AFI Phase 4 and/or IPC AMN Phase 4: assign at least Band C. If the computed NSS is below 6.0, raise it to 6.0."
+      ],
+      "note": "These are documented framework rules. Dashboard scores and classifications remain the final values reported in ActivityInfo; this page does not reclassify counties."
+    },
+    "first-level-nss": {
+      "pages": [
+        10,
+        11,
+        12
+      ],
+      "paragraphs": [
+        "Add the Underlying Vulnerability Score (0–2) and Aggregate Trigger Score (0–8) to obtain a first-level NSS on a 0–10 scale, then apply the methodological restrictions.",
+        "REACH conducts this monthly analysis before NAWG meetings. Scores are shared with members for review of indicator inputs and identification of counties needing discussion."
+      ]
+    },
+    "context-factors": {
+      "pages": [
+        12,
+        13
+      ],
+      "paragraphs": [
+        "The review considers the socio-political environment, conflict dynamics, available climate-impact evidence, access and mobility barriers, and other information affecting needs.",
+        "Where available, cross-cutting analysis identifies hotspots, vulnerable groups and their specific needs, and affected communities’ own priorities."
+      ]
+    },
+    "compounding-shocks": {
+      "pages": [
+        12
+      ],
+      "paragraphs": [
+        "Considers the number and cumulative occurrence of shocks over time, and their effects on coping capacity.",
+        "A county’s needs may reflect repeated or interacting shocks, rather than one event in isolation. Members bring contextual evidence to the discussion."
+      ]
+    },
+    "assistance-access": {
+      "pages": [
+        3,
+        12
+      ],
+      "paragraphs": [
+        "Considers whether affected populations can access assistance, alongside access and mobility barriers.",
+        "The graphic refers to assistance evidence as 5W. The document does not define a separate numerical 5W score here; this is a contextual review input."
+      ]
+    },
+    "final-result": {
+      "pages": [
+        13
+      ],
+      "paragraphs": [
+        "NAWG members agree the final county band through evidence, expert judgment and consensus. The final NSS is aligned with that agreed band."
+      ],
+      "bullets": [
+        "If the meeting increases a county’s band, increase the NSS to the minimum of the new band—for example, Band A starts at 8.00.",
+        "If the meeting decreases a county’s band, decrease the NSS to the maximum of the new band—for example, Band C ends at 6.9."
+      ],
+      "note": "This describes the documented meeting process, not a dashboard calculation. The dashboard preserves the final ActivityInfo band and NSS."
+    },
+    "not-flagged": {
+      "pages": [
+        3,
+        12
+      ],
+      "paragraphs": [
+        "The graphic distinguishes first-level results not flagged for discussion from those referred for contextual analysis.",
+        "Member review happens before the meeting. An absence of a discussion flag does not mean that the county has no humanitarian needs."
+      ]
+    },
+    "flagged": {
+      "pages": [
+        12
+      ],
+      "paragraphs": [
+        "A clear rationale is required when a member proposes a county for contextual analysis."
+      ],
+      "bullets": [
+        "The first-level classification differs from members’ assessment, especially where extreme or severe needs may be under-classified.",
+        "The county’s severity classification has changed since the previous month.",
+        "Information gaps or a previous close-monitoring designation warrant follow-up."
+      ]
+    },
+    "member-inputs": {
+      "pages": [
+        12
+      ],
+      "paragraphs": [
+        "County scores are circulated before the meeting so members can challenge indicator scores or corresponding severity levels and propose locations for discussion with a clear rationale.",
+        "Members include cluster focal points, Rapid Response Mechanism partners, UN agencies, INGOs and NNGOs."
+      ]
+    },
+    "expert-judgment": {
+      "pages": [
+        12,
+        13
+      ],
+      "paragraphs": [
+        "Members evaluate first-level results using sectoral and geographic expertise, contextual knowledge and additional evidence.",
+        "Contextual evidence may support raising or lowering a band. Evidence should be provided before adjustment; the final classification is agreed by consensus."
+      ]
+    },
+    "band-A": {
+      "pages": [
+        11
+      ],
+      "paragraphs": [
+        "Extreme humanitarian conditions (8–10): catastrophic acute needs across multiple sectors requiring an immediate, large-scale response.",
+        "IPC AFI Phase 5 or Phase 4 with pockets of Phase 5, and IPC AMN Phase 5, require Band A under the methodological restrictions."
+      ]
+    },
+    "band-B": {
+      "pages": [
+        11
+      ],
+      "paragraphs": [
+        "Very severe humanitarian conditions (7–7.9): acute multi-sectoral crises requiring urgent, prioritised response.",
+        "High food insecurity, malnutrition, protection risks, disease or displacement can combine; conditions may worsen rapidly without sustained intervention."
+      ]
+    },
+    "band-C": {
+      "pages": [
+        11
+      ],
+      "paragraphs": [
+        "Severe humanitarian conditions (6–6.9): significant multi-sectoral needs requiring sustained response and close monitoring.",
+        "IPC AFI Phase 4 and/or IPC AMN Phase 4 require at least Band C. Other shocks may create a risk of escalation."
+      ]
+    },
+    "band-D": {
+      "pages": [
+        11
+      ],
+      "paragraphs": [
+        "Moderate humanitarian conditions (4–5.9): notable but less acute needs requiring targeted response and continued monitoring.",
+        "Food insecurity, malnutrition, protection concerns and displacement are generally less severe or more localised than in higher bands."
+      ]
+    },
+    "band-E": {
+      "pages": [
+        11
+      ],
+      "paragraphs": [
+        "Stressed humanitarian conditions (2–3.9): humanitarian concerns with limited acute needs, and food-security and nutrition indicators below crisis thresholds.",
+        "Basic services are functioning, but vulnerabilities may worsen with new shocks."
+      ]
+    },
+    "band-F": {
+      "pages": [
+        11
+      ],
+      "paragraphs": [
+        "None/minor humanitarian conditions (0–1.9): no significant acute needs identified across the assessed sectors, with services largely accessible and functioning.",
+        "This is a description of assessed acute humanitarian conditions, not a claim that all underlying vulnerability is absent."
+      ]
+    }
+  },
+  "percentileScores": [
+    [
+      "Very high",
+      "x ≥ 75th percentile",
+      "1"
+    ],
+    [
+      "High",
+      "50th percentile ≤ x < 75th",
+      "0.75"
+    ],
+    [
+      "Moderate",
+      "25th percentile ≤ x < 50th",
+      "0.5"
+    ],
+    [
+      "Low",
+      "x < 25th percentile",
+      "0.25"
+    ]
+  ],
+  "guidance": [
+    {
+      "id": "review",
+      "title": "What is reviewed before and during a NAWG meeting?",
+      "pages": [
+        12
+      ],
+      "paragraphs": [
+        "Before the meeting, members review county scores, challenge indicator inputs where they disagree with conditions on the ground, and propose counties for discussion with a clear rationale."
+      ],
+      "bullets": [
+        "Focus on possible under-classification, changes since the previous month, and information gaps or previous close-monitoring designations.",
+        "During discussion, consider cumulative shocks, climate impacts, access to assistance and mobility barriers, plus sectoral and geographic expertise.",
+        "Additional evidence is required before a band is adjusted."
+      ]
+    },
+    {
+      "id": "follow-up",
+      "title": "What do close monitoring and low information mean?",
+      "pages": [
+        13
+      ],
+      "paragraphs": [
+        "These are additional follow-up designations, not extra severity bands."
+      ],
+      "bullets": [
+        "Close monitoring: anticipated shocks or worsening trends could lead to Band A or B. Flag the county to the ICCG and other stakeholders and follow up at the next meeting.",
+        "Low information county: evidence is too limited to understand conditions and needs. Flag it to the ICCG and partners for follow-up or possible assessments, and revisit it at the next meeting.",
+        "Where available, consider hotspots, vulnerable groups, their specific needs and communities’ own priorities."
+      ]
+    },
+    {
+      "id": "final-adjustment",
+      "title": "How is the final score aligned with the agreed band?",
+      "pages": [
+        11,
+        13
+      ],
+      "paragraphs": [
+        "First-level NSS is the sum of UVS and ATS, subject to IPC restrictions. The meeting then agrees the final band through evidence, expert judgment and consensus."
+      ],
+      "bullets": [
+        "A band increase sets the NSS to the new band’s minimum (for example, 8.00 for Band A).",
+        "A band decrease sets the NSS to the new band’s maximum (for example, 6.9 for Band C).",
+        "The dashboard displays the final ActivityInfo values; it does not rerun these adjustments."
+      ]
+    },
+    {
+      "id": "source-notes",
+      "title": "Source wording that needs clarification",
+      "pages": [
+        7,
+        9
+      ],
+      "paragraphs": [
+        "The original PDF is linked unchanged. These documentation issues are not resolved by inventing calculation rules."
+      ],
+      "bullets": [
+        "Malnutrition: page 9’s table shows a maximum base score of 1 and weight 1.5, while its prose mentions “score 2.” The approved dashboard maximum remains 1.5.",
+        "Threshold boundaries: page 7 does not explicitly classify a PRMS value exactly equal to 1.36 or displacement arrivals exactly equal to 2,500 or 5,000. Confirm those cases with the framework owner before building a new scoring calculation."
+      ]
+    }
+  ]
+}

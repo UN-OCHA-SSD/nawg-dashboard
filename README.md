@@ -21,6 +21,8 @@ On 1 October 2026 the user approved a separate reference comparison: `data/frame
 
 The revised climate maximum is 1.0; revised UVS and ATS maxima total 2 and 8. Source climate values and final NSS are unchanged. Methodology renders a native clickable flowchart matching the supplied framework image, with discussion branches, contextual analysis, final classification, zoom/fit controls and internal panning on narrow screens. National charts default to an explicitly truncated 5–7.5 axis with automatic expansion for out-of-range filtered values and a full 0–10 option.
 
+`data/framework-documentation.json` contains source-backed explanations for all 29 diagram elements and four expandable review/follow-up notes. Page-specific citations and the full-document/download links reuse the existing 13-page framework PDF, which is byte-identical to the user's supplied `NAWG_Framework.pdf` (SHA-256 `9e864a25ab64436759b397f627da579a5c1557b23825f24f67b876f271858bb3`). The page-9 malnutrition table/prose discrepancy and page-7 threshold-boundary ambiguities are disclosed rather than silently resolved. These descriptions and base-score tables explain the method only; they do not change or recalculate ActivityInfo observations.
+
 The 20 PDF products remain available as reference documents; their figures never fill operational observations. The comparison method description follows the companion trend report, while supplied endpoints are retained as reference outputs. ReliefWeb URLs remain placeholders until supplied. Official boundary files and logos remain. Original user CSVs outside this project have not been deleted. Retired tracked files remain recoverable from Git history; this release does not rewrite repository history.
 
 ## Build, test and preview
